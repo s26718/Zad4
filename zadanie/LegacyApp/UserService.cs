@@ -4,6 +4,22 @@ namespace LegacyApp
 {
     public class UserService
     {
+        private IClientRepository _clientRepository;
+        private ICreditService _creditService;
+
+        
+        public UserService(IClientRepository clientRepository, ICreditService creditService)
+        {
+            _clientRepository = clientRepository;
+            _creditService = creditService;
+        }
+
+        public UserService()
+        {
+            _clientRepository = new ClientRepository();
+            _creditService = new UserCreditService();
+        }
+
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
             if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
@@ -25,7 +41,7 @@ namespace LegacyApp
                 return false;
             }
 
-            var clientRepository = new ClientRepository();
+            var clientRepository = _clientRepository;
             var client = clientRepository.GetById(clientId);
 
             var user = new User
@@ -43,7 +59,7 @@ namespace LegacyApp
             }
             else if (client.Type == "ImportantClient")
             {
-                using (var userCreditService = new UserCreditService())
+                using (var userCreditService = _creditService)
                 {
                     int creditLimit = userCreditService.GetCreditLimit(user.LastName, user.DateOfBirth);
                     creditLimit = creditLimit * 2;
@@ -53,7 +69,7 @@ namespace LegacyApp
             else
             {
                 user.HasCreditLimit = true;
-                using (var userCreditService = new UserCreditService())
+                using (var userCreditService = _creditService)
                 {
                     int creditLimit = userCreditService.GetCreditLimit(user.LastName, user.DateOfBirth);
                     user.CreditLimit = creditLimit;

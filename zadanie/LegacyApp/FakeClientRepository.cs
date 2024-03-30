@@ -1,0 +1,28 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+
+namespace LegacyApp;
+
+public class FakeClientRepository : IClientRepository
+{
+    public static readonly Dictionary<int, Client> Database = new Dictionary<int, Client>()
+    {
+        {1, new Client { ClientId = 1, Name = "Kowalski", Address = "Warszawa, Złota 12", Email = "kowalski@wp.pl", Type = "NormalClient" }},
+        {2, new Client{ClientId = 2, Name = "Malewski", Address = "Warszawa, Koszykowa 86", Email = "malewski@gmail.pl", Type = "VeryImportantClient"}},
+        {3, new Client{ClientId = 3, Name = "Smith", Address = "Warszawa, Kolorowa 22", Email = "smith@gmail.pl", Type = "ImportantClient"}},
+        {4, new Client{ClientId = 4, Name = "Doe", Address = "Warszawa, Kolorowa 22", Email = "doe@gmail.pl", Type = "NormalClient"}},
+    };
+    
+    public Client GetById(int clientId)
+    {
+        int randomWaitTime = new Random().Next(2000);
+        Thread.Sleep(randomWaitTime);
+
+        if (Database.ContainsKey(clientId))
+            return Database[clientId];
+
+        throw new ArgumentException($"User with id {clientId} does not exist in database");
+    }
+    
+}
