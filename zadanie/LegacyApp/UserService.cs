@@ -27,24 +27,19 @@ namespace LegacyApp
                 return false;
             }
 
-            if (!email.Contains("@") && !email.Contains("."))
+            if (!IsEmailCorrect(email))
             {
                 return false;
             }
-
-            var now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
-
-            if (age < 21)
+            
+            if ( GetUserAge(dateOfBirth)< 21)
             {
                 return false;
             }
+            
+            Client client = _clientRepository.GetById(clientId);
 
-            var clientRepository = _clientRepository;
-            var client = clientRepository.GetById(clientId);
-
-            var user = new User
+            User user = new User
             {
                 Client = client,
                 DateOfBirth = dateOfBirth,
@@ -59,17 +54,16 @@ namespace LegacyApp
             }
             else if (client.Type == "ImportantClient")
             {
-                using (var userCreditService = _creditService)
+                using (ICreditService userCreditService = _creditService)
                 {
                     int creditLimit = userCreditService.GetCreditLimit(user.LastName, user.DateOfBirth);
-                    creditLimit = creditLimit * 2;
-                    user.CreditLimit = creditLimit;
+                    user.CreditLimit *= 2;
                 }
             }
             else
             {
                 user.HasCreditLimit = true;
-                using (var userCreditService = _creditService)
+                using (ICreditService userCreditService = _creditService)
                 {
                     int creditLimit = userCreditService.GetCreditLimit(user.LastName, user.DateOfBirth);
                     user.CreditLimit = creditLimit;
@@ -84,5 +78,28 @@ namespace LegacyApp
             UserDataAccess.AddUser(user);
             return true;
         }
+        
+        
+        private bool IsEmailCorrect(string email)
+        {
+            if (!email.Contains("@") && !email.Contains("."))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private int GetUserAge(DateTime dateOfBirth)
+        {
+            DateTime now = DateTime.Now;
+            int age = now.Year - dateOfBirth.Year;
+            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
+
+            return age;
+        }
     }
+    
 }
