@@ -76,7 +76,8 @@ public class UserServiceTests
         
         ICreditService creditSerice = new FakeCreditService();
         IClientRepository clientRepository = new FakeClientRepository();
-        UserService userService = new UserService(clientRepository,creditSerice);
+        IUserValidator userValidator = new UserValidator();
+        UserService userService = new UserService(clientRepository,creditSerice,userValidator);
         bool result = userService.AddUser(firstName, lastName, email, dateOfBirth, clientId);
         Assert.Equal(false,result);
     }
@@ -92,7 +93,8 @@ public class UserServiceTests
         
         ICreditService creditSerice = new FakeCreditService();
         IClientRepository clientRepository = new FakeClientRepository();
-        UserService userService = new UserService(clientRepository,creditSerice);
+        IUserValidator userValidator = new UserValidator();
+        UserService userService = new UserService(clientRepository,creditSerice,userValidator);
         bool result = userService.AddUser(firstName, lastName, email, dateOfBirth, clientId);
         Assert.Equal(true,result);
     }
@@ -108,7 +110,8 @@ public class UserServiceTests
         
         ICreditService creditSerice = new FakeCreditService();
         IClientRepository clientRepository = new FakeClientRepository();
-        UserService userService = new UserService(clientRepository,creditSerice);
+        IUserValidator userValidator = new UserValidator();
+        UserService userService = new UserService(clientRepository,creditSerice,userValidator);
         bool result = userService.AddUser(firstName, lastName, email, dateOfBirth, clientId);
         Assert.Equal(true,result);
     }
@@ -124,7 +127,8 @@ public class UserServiceTests
         
         ICreditService creditSerice = new FakeCreditService();
         IClientRepository clientRepository = new FakeClientRepository();
-        UserService userService = new UserService(clientRepository,creditSerice);
+        IUserValidator userValidator = new UserValidator();
+        UserService userService = new UserService(clientRepository,creditSerice,userValidator);
         bool result = userService.AddUser(firstName, lastName, email, dateOfBirth, clientId);
         Assert.Equal(true,result);
     }
@@ -141,7 +145,8 @@ public class UserServiceTests
         
         ICreditService creditSerice = new FakeCreditService();
         IClientRepository clientRepository = new FakeClientRepository();
-        UserService userService = new UserService(clientRepository,creditSerice);
+        IUserValidator userValidator = new UserValidator();
+        UserService userService = new UserService(clientRepository,creditSerice,userValidator);
         //bool result = userService.AddUser(firstName, lastName, email, dateOfBirth, clientId);
         Assert.Throws<ArgumentException>(() =>
         {
@@ -160,7 +165,8 @@ public class UserServiceTests
         
         ICreditService creditSerice = new FakeCreditService();
         IClientRepository clientRepository = new FakeClientRepository();
-        UserService userService = new UserService(clientRepository,creditSerice);
+        IUserValidator userValidator = new UserValidator();
+        UserService userService = new UserService(clientRepository,creditSerice,userValidator);
         //bool result = userService.AddUser(firstName, lastName, email, dateOfBirth, clientId);
         Assert.Throws<ArgumentException>(() =>
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml;
 
 namespace LegacyApp
 {
@@ -6,37 +7,30 @@ namespace LegacyApp
     {
         private IClientRepository _clientRepository;
         private ICreditService _creditService;
+        private IUserValidator _userValidator;
 
         
-        public UserService(IClientRepository clientRepository, ICreditService creditService)
+        public UserService(IClientRepository clientRepository, ICreditService creditService, IUserValidator userValidator)
         {
             _clientRepository = clientRepository;
             _creditService = creditService;
+            _userValidator = userValidator;
         }
 
         public UserService()
         {
             _clientRepository = new ClientRepository();
             _creditService = new UserCreditService();
+            _userValidator = new UserValidator();
         }
 
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
-            {
-                return false;
-            }
 
-            if (!IsEmailCorrect(email))
+            if (!_userValidator.ValidateUser(firstName, lastName, email, dateOfBirth))
             {
                 return false;
             }
-            
-            if ( GetUserAge(dateOfBirth)< 21)
-            {
-                return false;
-            }
-            
             Client client = _clientRepository.GetById(clientId);
 
             User user = new User
@@ -80,26 +74,7 @@ namespace LegacyApp
         }
         
         
-        private bool IsEmailCorrect(string email)
-        {
-            if (!email.Contains("@") && !email.Contains("."))
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-        private int GetUserAge(DateTime dateOfBirth)
-        {
-            DateTime now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
-
-            return age;
-        }
+        
     }
     
 }
